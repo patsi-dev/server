@@ -55,7 +55,7 @@ class PaymentResource(Resource):
 
             for payment in payments:
                 all_payments.append(payment.to_dict())
-            return payments
+            return all_payments
         else:
             payment = Payment.query.filter_by(id=id).first()
 
