@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_restful import Api
 from flask_migrate import Migrate
@@ -10,6 +11,8 @@ from flask_jwt_extended import JWTManager
 from resources.home import HomeResource
 from resources.vehicles import VehicleResource
 from resources.payments import PaymentResource
+from resources.employees import EmployeeResource
+from resources.customers import CustomerResource
 
 from models import db
 
@@ -17,7 +20,7 @@ from models import db
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cars.db'
-app.config['JWT_SECRET_KEY'] = 'cars'
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 
 #Connecting our app to extensions
 api = Api(app)
@@ -38,8 +41,8 @@ jwt = JWTManager(app)
 bcrpt = Bcrypt(app)
 
 
-
-
 api.add_resource(HomeResource,'/')
 api.add_resource(VehicleResource,'/vehicles','/vehicles/<int:id>')
+api.add_resource(EmployeeResource,'/employees','/employees/<int:id>')
+api.add_resource(CustomerResource,'/customers','/customers/<int:id>')
 api.add_resource(PaymentResource,'/payments','/payments/<int:id>')
