@@ -18,6 +18,7 @@ class EmployeeResource(Resource):
         
         data = EmployeeResource.parser.parse_args()
         
+        #TODO --verify the contact details already exist 
         new_employee = Employee(**data)
         
         db.session.add(new_employee)
