@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_restful import Api
 from flask_migrate import Migrate
@@ -17,7 +18,7 @@ from models import db
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cars.db'
-app.config['JWT_SECRET_KEY'] = 'cars'
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 
 #Connecting our app to extensions
 api = Api(app)
@@ -36,8 +37,6 @@ jwt = JWTManager(app)
 
 #For hashing the password
 bcrpt = Bcrypt(app)
-
-
 
 
 api.add_resource(HomeResource,'/')
