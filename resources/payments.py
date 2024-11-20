@@ -74,12 +74,20 @@ class PaymentResource(Resource):
         if payment == None:
             return {'message': 'Payment not found'}
 
-        for key in data.keys():
-            setattr(payment, key, data[key])
+        else:
+            payment_date = datetime.strptime(
+                data['payment_date'], '%Y-%m-%dT%H:%M:%S')
 
-        db.session.commit()
+            
+            payment.payment_id=data['payment_id']
+            payment.invoice_id=data['invoice_id']
+            payment.payment_date=payment_date
+            payment.amount=data['amount']
+            payment.payment_method=data['payment_method']
+            
+            db.session.commit()
 
-        return {'message': 'Payment updated successfully'}
+            return {'message': 'Payment updated successfully'}
 
     def delete(self, id=None):
 
