@@ -1,7 +1,7 @@
 # Endpoint for performing the CRUD  operations on the customers
 from flask_restful import Resource, reqparse
 
-from models import db, Customer
+from models import db, Customer,ValidationError
 
 
 class CustomerResource(Resource):
@@ -22,14 +22,27 @@ class CustomerResource(Resource):
 
         data = CustomerResource.parser.parse_args()
 
-        # TODO --> Verify if the email and contact already exists
-        new_customer = Customer(**data)
+        # Checking if the phone already exists in our database
+        phone = Customer.query.filter_by(phone=data['phone']).first()
+        if phone:
+            return {'message': 'Phone number already in use', 'status': 'fail'}, 422
 
-        db.session.add(new_customer)
+        # Checking if the email already exists in our database
+        email = Customer.query.filter_by(email=data['email']).first()
+        if email:
+            return {'message': 'Email already exists', 'status': 'fail'}, 422
 
-        db.session.commit()
+        try:
+            new_customer = Customer(**data)
 
-        return {'message': 'Customer details added '}
+            db.session.add(new_customer)
+
+            db.session.commit()
+
+            return {'message': 'Customer details added '}
+        #Handling exception error to make sure correct details are passed
+        except ValidationError as e:
+            return {'message':str(e),'status':'fail'},422
 
     def get(self, id=None):
 
