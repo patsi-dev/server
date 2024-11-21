@@ -1,6 +1,7 @@
 #Our database schema
 import re
 from sqlalchemy.orm import validates
+from flask_bcrpyt import check_password_hash,generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy_serializer import SerializerMixin
@@ -40,6 +41,29 @@ class User(db.Model,SerializerMixin):
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             raise ValidationError('Please enter a valid email address.')
         return email
+    
+     # Function to check  the strength of the password
+    @validates('password')
+    def password_strength(self, key, password):
+        # Regular expressions for uppercase, lowercase, and numeric characters
+        if len(password) < 8:
+            raise ValidationError(
+                'Password is too short, it should be at least 8 characters.')
+        if not re.search('[A-Z]', password):
+            raise ValidationError(
+                'Password must contain at least one uppercase letter.')
+        if not re.search('[a-z]', password):
+            raise ValidationError(
+                'Password must contain at least one lowercase letter.')
+        if not re.search('[0-9]', password):
+            raise ValidationError('Password must contain at least one number.')
+
+        # Hashing the password before doing the validation
+        return generate_password_hash(password).decode('utf-8')
+
+    # Function to check password
+    def check_password(self, plain_password):
+        return check_password_hash(self.password, plain_password)
 
 class Vehicle(db.Model,SerializerMixin):
     
