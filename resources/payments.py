@@ -27,6 +27,16 @@ class PaymentResource(Resource):
             payment_date = datetime.strptime(
                 data['payment_date'], '%Y-%m-%dT%H:%M:%S')
 
+            #Checking if the payment id and the invoice id already exists
+            payment_id = Payment.query.filter_by(payment_id=data['payment_id']).first()
+            if payment_id:
+                return {'message':'Payment ID cannot be reused','status':'fail'},422
+            
+            #Checking if the invoice id
+            invoice_id = Payment.query.filter_by(invoice_id=data['invoice_id']).first()
+            if invoice_id:
+                return {'message':'Invoice ID cannot be reused','status':'fail'},422
+            
             new_payment = Payment(payment_id=data['payment_id'],
                                   invoice_id=data['invoice_id'],
                                   payment_date=payment_date,
