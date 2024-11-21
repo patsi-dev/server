@@ -23,6 +23,17 @@ class CustomerResource(Resource):
         data = CustomerResource.parser.parse_args()
 
         # TODO --> Verify if the email and contact already exists
+        
+        #Checking if the phone already exists in our database
+        phone = Customer.query.filter_by(phone=data['phone']).first()
+        if phone:
+            return {'message':'Phone number already in use','status':'fail'},422
+        
+        #Checking if the email already exists in our database
+        email = Customer.query.filter_by(email=data['email']).first()
+        if email:
+            return {'message':'Email already exists','status':'fail'},422
+        
         new_customer = Customer(**data)
 
         db.session.add(new_customer)
