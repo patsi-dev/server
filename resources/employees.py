@@ -19,6 +19,12 @@ class EmployeeResource(Resource):
         data = EmployeeResource.parser.parse_args()
         
         #TODO --verify the contact details already exist 
+        #We need to verify that the contact details of the employee already exists
+        contact_details = Employee.query.filter_by(contact_details=data['contact_details']).first()
+        
+        if contact_details:
+            return {'message':'Contact details in use','status':'fail'},422
+        
         new_employee = Employee(**data)
         
         db.session.add(new_employee)
