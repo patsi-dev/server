@@ -1,7 +1,7 @@
 # Endpoint for performing the CRUD  operations on the customers
 from flask_restful import Resource, reqparse
 
-from models import db, Customer
+from models import db, Customer,ValidationError
 
 
 class CustomerResource(Resource):
@@ -32,13 +32,17 @@ class CustomerResource(Resource):
         if email:
             return {'message': 'Email already exists', 'status': 'fail'}, 422
 
-        new_customer = Customer(**data)
+        try:
+            new_customer = Customer(**data)
 
-        db.session.add(new_customer)
+            db.session.add(new_customer)
 
-        db.session.commit()
+            db.session.commit()
 
-        return {'message': 'Customer details added '}
+            return {'message': 'Customer details added '}
+        #Handling exception error to make sure correct details are passed
+        except ValidationError as e:
+            return {'message':str(e),'status':'fail'},422
 
     def get(self, id=None):
 
