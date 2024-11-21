@@ -1,7 +1,7 @@
 #Our database schema
 import re
 from sqlalchemy.orm import validates
-from flask_bcrpyt import check_password_hash,generate_password_hash
+from flask_bcrypt import check_password_hash,generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy_serializer import SerializerMixin
@@ -35,6 +35,8 @@ class User(db.Model,SerializerMixin):
     email = db.Column(db.String(60),nullable=False,unique=True)
     password = db.Column(db.String(50),nullable=False)
     
+    #We need to remove this from the response we send back
+    serialize_rules = ('-password',)
     #Validating the email of the user before we save it to the database
     @validates('email')
     def validate_email(self,key,email):

@@ -8,6 +8,7 @@ from flask_jwt_extended import JWTManager
 
 
 #Importing our endpoints
+from resources.auth import RegisterResource,LoginResource
 from resources.home import HomeResource
 from resources.vehicles import VehicleResource
 from resources.payments import PaymentResource
@@ -42,6 +43,8 @@ bcrpt = Bcrypt(app)
 
 
 api.add_resource(HomeResource,'/')
+api.add_resource(RegisterResource,'/register')
+api.add_resource(LoginResource,'/login')
 api.add_resource(VehicleResource,'/vehicles','/vehicles/<int:id>')
 api.add_resource(EmployeeResource,'/employees','/employees/<int:id>')
 api.add_resource(CustomerResource,'/customers','/customers/<int:id>')
