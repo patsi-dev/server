@@ -23,6 +23,23 @@ class ValidationError(Exception):
     def __init__(self,message):
         self.message = message
         super().__init__(self.message)
+        
+        
+class User(db.Model,SerializerMixin):
+    
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer,primary_key=True)
+    user_name = db.Column(db.String(60),nullable=False)
+    email = db.Column(db.String(60),nullable=False,unique=True)
+    password = db.Column(db.String(50),nullable=False)
+    
+    #Validating the email of the user before we save it to the database
+    @validates('email')
+    def validate_email(self,key,email):
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            raise ValidationError('Please enter a valid email address.')
+        return email
 
 class Vehicle(db.Model,SerializerMixin):
     
