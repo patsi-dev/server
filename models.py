@@ -90,7 +90,8 @@ class Employee(db.Model,SerializerMixin):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(60),nullable=False)
     position = db.Column(db.String(60),nullable=False)
-    contact_details = db.Column(db.String(60),nullable=False,unique=True)
+    id_no = db.Column(db.String(60),nullable=False,unique=True)
+    contacts = db.Column(db.String(60),nullable=False,unique=True)
 
 class Customer(db.Model,SerializerMixin):
 
