@@ -83,9 +83,9 @@ class EmployeeResource(Resource):
             return {'message': 'Employee not found'}
         else:
             employee = Employee.query.filter_by(id=id).first()
-
+           
             db.session.delete(employee)
 
             db.session.commit()
-
-            return {'message': 'Employee deleted'}
+            # print(employee.name)
+            return {'message': f'{employee.name} deleted successully'}
