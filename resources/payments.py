@@ -8,10 +8,8 @@ from models import db, Payment
 class PaymentResource(Resource):
 
     parser = reqparse.RequestParser()
-    parser.add_argument('payment_id', type=int, required=True,
+    parser.add_argument('payment_id', type=str, required=True,
                         help='Payment Id is required')
-    parser.add_argument('invoice_id', type=int, required=True,
-                        help='Invoice Id is required')
     parser.add_argument('amount', type=int, required=True,
                         help='Amount is reuired')
     parser.add_argument('payment_date', type=str, required=True,
@@ -27,18 +25,14 @@ class PaymentResource(Resource):
             payment_date = datetime.strptime(
                 data['payment_date'], '%Y-%m-%dT%H:%M:%S')
 
-            #Checking if the payment id and the invoice id already exists
-            payment_id = Payment.query.filter_by(payment_id=data['payment_id']).first()
+            # Checking if the payment id and the invoice id already exists
+            payment_id = Payment.query.filter_by(
+                payment_id=data['payment_id']).first()
             if payment_id:
-                return {'message':'Payment ID cannot be reused','status':'fail'},422
-            
-            #Checking if the invoice id
-            invoice_id = Payment.query.filter_by(invoice_id=data['invoice_id']).first()
-            if invoice_id:
-                return {'message':'Invoice ID cannot be reused','status':'fail'},422
-            
+                return {'message': 'Payment ID cannot be reused', 'status': 'fail'}, 422
+
             new_payment = Payment(payment_id=data['payment_id'],
-                                  invoice_id=data['invoice_id'],
+
                                   payment_date=payment_date,
                                   amount=data['amount'],
                                   payment_method=data['payment_method'])
@@ -88,13 +82,11 @@ class PaymentResource(Resource):
             payment_date = datetime.strptime(
                 data['payment_date'], '%Y-%m-%dT%H:%M:%S')
 
-            
-            payment.payment_id=data['payment_id']
-            payment.invoice_id=data['invoice_id']
-            payment.payment_date=payment_date
-            payment.amount=data['amount']
-            payment.payment_method=data['payment_method']
-            
+            payment.payment_id = data['payment_id']
+            payment.payment_date = payment_date
+            payment.amount = data['amount']
+            payment.payment_method = data['payment_method']
+
             db.session.commit()
 
             return {'message': 'Payment updated successfully'}
