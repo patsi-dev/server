@@ -92,4 +92,4 @@ class CustomerResource(Resource):
 
             db.session.commit()
 
-            return {'message': 'Customer deleted successfully'}
+            return {'message': f'{customer.name} deleted successfully'}

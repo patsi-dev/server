@@ -11,8 +11,10 @@ class EmployeeResource(Resource):
                         help='Name of the employee is required')
     parser.add_argument('position', type=str, required=True,
                         help='Position of the employee is required')
-    parser.add_argument('contact_details', type=str, required=True,
-                        help='Contact details of the user is required')
+    parser.add_argument('contacts', type=str, required=True,
+                        help='Contact details of the employee is required')
+    parser.add_argument('id_no', type=str, required=True,
+                        help='National ID number required')
 
     def post(self):
         '''Endpoint for adding new employees to the db'''
@@ -20,12 +22,16 @@ class EmployeeResource(Resource):
         data = EmployeeResource.parser.parse_args()
 
         # We need to verify that the contact details of the employee already exists
-        contact_details = Employee.query.filter_by(
-            contact_details=data['contact_details']).first()
+        contacts = Employee.query.filter_by(
+            contacts=data['contacts']).first()
 
-        if contact_details:
+        if contacts:
             return {'message': 'Contact details in use', 'status': 'fail'}, 422
 
+        # Verifying if the id number is already in use
+        id_number = Employee.query.filter_by(id_no=data['id_no']).first()
+        if id_number:
+            return {'message': 'Id number already exists', 'status': 'faail'}, 422
         new_employee = Employee(**data)
 
         db.session.add(new_employee)
@@ -77,9 +83,9 @@ class EmployeeResource(Resource):
             return {'message': 'Employee not found'}
         else:
             employee = Employee.query.filter_by(id=id).first()
-
+           
             db.session.delete(employee)
 
             db.session.commit()
-
-            return {'message': 'Employee deleted'}
+            # print(employee.name)
+            return {'message': f'{employee.name} deleted successully'}
